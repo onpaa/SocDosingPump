@@ -7,7 +7,7 @@
 #include <TimeLib.h>
 #include <WidgetRTC.h>
 
-
+// AHOJ
 
 
 char auth[] = "b5ac866ca280448cae7a375658aa923d";
