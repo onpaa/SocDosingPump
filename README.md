@@ -1,1 +1,3 @@
 # SocDosingPump
+
+Author: Ondřej Klement
