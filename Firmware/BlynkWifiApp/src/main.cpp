@@ -11,8 +11,8 @@
 
 char auth[] = "b5ac866ca280448cae7a375658aa923d";
 
-char ssid[] = "SPAVOS_NET";
-char pass[] = "m0gu145.";
+char ssid[] = "WL520GC";
+char pass[] = "klemont1";
 
 BlynkTimer timer;
 WidgetRTC rtc;
@@ -73,48 +73,48 @@ void pumpAllValue()
 }
 void pumpAllValue2() 
 {
-  if (EEPROM.read(7)==1)
+  if (EEPROM.read(15)==1)
   {
     String rowStatus = String("Status                                  ") + "ON";
-    Blynk.virtualWrite(V3, rowStatus);
+    Blynk.virtualWrite(V10, rowStatus);
   }
-  else if (EEPROM.read(7)==0)
+  else if (EEPROM.read(15)==0)
   {
     String rowStatus = String("Status                                  ") + "OFF";
-    Blynk.virtualWrite(V3, rowStatus);
+    Blynk.virtualWrite(V10, rowStatus);
   }
   else{}
 
-  if(EEPROM.read(1)<10 && EEPROM.read(2)<10 )
+  if(EEPROM.read(9)<10 && EEPROM.read(10)<10 )
   {
-    String rowTime = String("Time                                   ")+ "0" + EEPROM.read(1) + ":" + "0"+ EEPROM.read(2);
-    Blynk.virtualWrite(V4, rowTime);
+    String rowTime = String("Time                                   ")+ "0" + EEPROM.read(9) + ":" + "0"+ EEPROM.read(10);
+    Blynk.virtualWrite(V12, rowTime);
   }
-  else if (EEPROM.read(1)<10)
+  else if (EEPROM.read(9)<10)
   {
-    String rowTime = String("Time                                   ")+ "0" + EEPROM.read(1) + ":" +  EEPROM.read(2);
-    Blynk.virtualWrite(V4, rowTime);
+    String rowTime = String("Time                                   ")+ "0" + EEPROM.read(9) + ":" +  EEPROM.read(10);
+    Blynk.virtualWrite(V12, rowTime);
   }
-  else if(EEPROM.read(2)<10 )
+  else if(EEPROM.read(10)<10 )
   {
-    String rowTime = String("Time                                   ") + EEPROM.read(1) + ":" + "0"+ EEPROM.read(2);
-    Blynk.virtualWrite(V4, rowTime);
+    String rowTime = String("Time                                   ") + EEPROM.read(9) + ":" + "0"+ EEPROM.read(10);
+    Blynk.virtualWrite(V12, rowTime);
   }
   else
   {
-    String rowTime = String("Time                                    ") + EEPROM.read(1) + ":" + EEPROM.read(2);
-    Blynk.virtualWrite(V4, rowTime);
+    String rowTime = String("Time                                    ") + EEPROM.read(9) + ":" + EEPROM.read(10);
+    Blynk.virtualWrite(V12, rowTime);
   }
 
-  if (EEPROM.read(4)==0)
+  if (EEPROM.read(12)==0)
   {
-    String rowAmount = String("Amount                               ") + EEPROM.read(5) + " ml";
-    Blynk.virtualWrite(V5, rowAmount);
+    String rowAmount = String("Amount                               ") + EEPROM.read(13) + " ml";
+    Blynk.virtualWrite(V11, rowAmount);
   }
   else
   {
-    String rowAmount = String("Amount              ") + EEPROM.read(4) + " dl   " + EEPROM.read(5) + " ml       ";
-    Blynk.virtualWrite(V5, rowAmount);
+    String rowAmount = String("Amount              ") + EEPROM.read(12) + " dl   " + EEPROM.read(13) + " ml       ";
+    Blynk.virtualWrite(V11, rowAmount);
   }
 }
 
@@ -186,18 +186,27 @@ void startPumpInExactMode(){}
 
 void timeTesting()
 { 
-  if(EEPROM.read(7) == 1)
+  if(EEPROM.read(7) == 1 || EEPROM.read(15) == 1)
   {
-    if(EEPROM.read(6) == 2)
+    if(EEPROM.read(6) == 2 || EEPROM.read(14) == 2)
     {
-      if(EEPROM.read(1) == hour() && EEPROM.read(2) == minute()	&& EEPROM.read(3) == second()) //pump1 multiple mode
+      //if((EEPROM.read(1) == hour() && EEPROM.read(2) == minute()	&& EEPROM.read(3) == second()) && 
+      //(EEPROM.read(9) == hour() && EEPROM.read(10) == minute()	&& EEPROM.read(11) == second())) //pump1 period mode
+      //{ }
+      if(EEPROM.read(1) == hour() && EEPROM.read(2) == minute()	&& EEPROM.read(3) == second()) //pump1 period mode
       { 
         uint8_t pumpNumber = 1;
         startPumpInMultipleMode(EEPROM.read(0),EEPROM.read(4),EEPROM.read(5),EEPROM.read(1),EEPROM.read(2),EEPROM.read(3),pumpNumber);
         oneFor = 0;
       }
+      if(EEPROM.read(9) == hour() && EEPROM.read(10) == minute()	&& EEPROM.read(11) == second()) //pump2 period mode
+      { 
+        uint8_t pumpNumber = 2;
+        startPumpInMultipleMode(EEPROM.read(8),EEPROM.read(12),EEPROM.read(13),EEPROM.read(9),EEPROM.read(10),EEPROM.read(11),pumpNumber);
+        oneFor = 0;
+      }
     }
-    else if (EEPROM.read(6) == 1)
+    else if (EEPROM.read(6) == 1 || EEPROM.read(14) == 1)
     {
 
     }
@@ -230,12 +239,12 @@ BLYNK_WRITE(V13)
     if(param.asInt())
     {
       Serial.println("Pump 2 on");
-      //EEPROM.write(8,1);
+      EEPROM.write(15,1);
       EEPROM.commit();
     }
     else{
       Serial.println("Pump 2 off");
-      //EEPROM.write(8,0);
+      EEPROM.write(15,0);
       EEPROM.commit();
     }
 }
@@ -256,6 +265,22 @@ BLYNK_WRITE(V2)
   EEPROM.commit();
 }
 
+//pump2 mode select
+BLYNK_WRITE(V6)
+ {
+  switch (param.asInt())
+  {
+    case 1: 
+      EEPROM.write(14,1);    
+      break;
+    case 2: 
+      EEPROM.write(14,2);
+      break;
+    default:
+      Serial.println("Unknown item selected");
+  }
+  EEPROM.commit();
+}
 //setting menu pump choice
 BLYNK_WRITE(V21)
  {
@@ -415,6 +440,7 @@ void setup()
     timer.setInterval(500L,getTime);
     timer.setInterval(50L, timeTesting);
     timer.setInterval(1000L, pumpAllValue);
+    timer.setInterval(1000L, pumpAllValue2);
     timer.setInterval(500L,printActSetVal);
 
     if(EEPROM.read(7)==0)
