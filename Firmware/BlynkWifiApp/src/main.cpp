@@ -28,9 +28,9 @@ static const uint8_t motor2pin = 4;
 #include "data.hpp"
 
 static const int numberOfPump = 2;
-pump pumps[numberOfPump];
+Pump pumps[numberOfPump];
 
-pump pump1, pump2;
+Pump pump1, pump2;
 
 #include "blynk_functions.hpp"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-struct pump
+struct Pump
 {
   uint8_t mutliple;
 
