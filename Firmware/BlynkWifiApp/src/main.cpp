@@ -27,7 +27,8 @@ static const uint8_t motor2pin = 4;
 
 #include "data.hpp"
 
-pump pumps[2];
+static const int numberOfPump = 2;
+pump pumps[numberOfPump];
 
 pump pump1, pump2;
 
@@ -427,11 +428,10 @@ void setup()
 {
   EEPROM.begin(512);
 
-
-  for(pump p : pumps) {
-    int actualPump = 0;  
+  for(int actualPump = 0; actualPump < numberOfPump; ++actualPump) {
     EEPROM.get(EEPROM_pumpSize + actualPump++, pumps[actualPump]); 
   }
+
 
   setupLeds();
   setupButtons();
@@ -459,9 +459,9 @@ void loop()
   Blynk.run();
   timer.run();
 
-  for(pump p : pumps) {
-    int actualPump = 0;
-    p.changed = false;
-    EEPROM.put(EEPROM_pumpSize + actualPump++, pumps[actualPump]);    
+  for(int actualPump = 0; actualPump < numberOfPump; ++actualPump) {
+    if(pumps[actualPump].changed) {
+      EEPROM.get(EEPROM_pumpSize + actualPump++, pumps[actualPump]); 
+    }
   }
 }
