@@ -32,7 +32,6 @@ struct pump
   bool changed = false;
 };
 
-pump pump1, pump2;
 
 static const int EEPROM_multiple = 0;
 static const int EEPROM_hourPeriodMode = 1;

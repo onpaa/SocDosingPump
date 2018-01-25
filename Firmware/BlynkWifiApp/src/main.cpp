@@ -26,8 +26,10 @@ static const uint8_t motor1pin = 17;
 static const uint8_t motor2pin = 4;
 
 #include "data.hpp"
-#include "blynk_functions.hpp"
 
+pump pump1, pump2;
+
+#include "blynk_functions.hpp"
 
 void pumpAllValue() 
 {
@@ -426,7 +428,6 @@ void setup()
   EEPROM.get(EEPROM_pumpSize * 0, pump1);
   EEPROM.get(EEPROM_pumpSize * 1, pump2);
 
- 
   setupLeds();
   setupButtons();
 
@@ -450,13 +451,12 @@ void setup()
 
 void loop()
 {   
-
   Blynk.run();
   timer.run();
 
   if(pump1.changed) {
     pump1.changed = false;
-    EEPROM.put(0, pump1);    
+    EEPROM.put(0, pump1);
   }
   if(pump2.changed) {
     pump2.changed = false;
