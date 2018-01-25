@@ -74,13 +74,13 @@ BLYNK_WRITE(V21)
   switch (param.asInt())
   {
     case 1: 
-      pumpSettingChoice = 1;   
+      pumpSettingChoice = 0;   
       break;
     case 2: 
-      pumpSettingChoice = 2;
+      pumpSettingChoice = 1;
       break;
     default:
-      pumpSettingChoice = 3;
+      pumpSettingChoice = 0;
   }
 }
 
@@ -90,65 +90,39 @@ BLYNK_WRITE(V23)
   switch (param.asInt())
   {
     case 1: 
-      pumpSettingChoice1 = 1;   
+      pumpSettingChoice1 = 0;   
       break;
     case 2: 
-      pumpSettingChoice1 = 2;
+      pumpSettingChoice1 = 1;
       break;
     default:
-      pumpSettingChoice1 = 3;
+      pumpSettingChoice1 = 0;
   }
 }
 // PUMP MULTIPLE TIME INPUT START
 
 BLYNK_WRITE(V9) 
 {
-  if(pumpSettingChoice == 1)
-  {
-    long startTimeInSecs = param[0].asLong();
+  long startTimeInSecs = param[0].asLong();
 
-    int s = 0, m = 0, h = 0;
-    s = startTimeInSecs % 60;
-    startTimeInSecs /= 60;
-    m = startTimeInSecs % 60;
-    startTimeInSecs /= 60;
-    h = startTimeInSecs % 24;
+  int s = 0, m = 0, h = 0;
+  s = startTimeInSecs % 60;
+  startTimeInSecs /= 60;
+  m = startTimeInSecs % 60;
+  startTimeInSecs /= 60;
+  h = startTimeInSecs % 24;
 
-    Serial.println();
-    Serial.print(h);
-    Serial.print(":");
-    Serial.print(m);
-    Serial.print(":");
-    Serial.println(s);
+  Serial.println();
+  Serial.print(h);
+  Serial.print(":");
+  Serial.print(m);
+  Serial.print(":");
+  Serial.println(s);
 
-    EEPROM.write(1,h);
-    EEPROM.write(2,m);
-    EEPROM.write(3,s);
-  }
-  else if(pumpSettingChoice == 2)
-  {
-    long startTimeInSecs = param[0].asLong();
-
-    int s = 0, m = 0, h = 0;
-    s = startTimeInSecs % 60;
-    startTimeInSecs /= 60;
-    m = startTimeInSecs % 60;
-    startTimeInSecs /= 60;
-    h = startTimeInSecs % 24;
-
-    Serial.println();
-    Serial.print(h);
-    Serial.print(":");
-    Serial.print(m);
-    Serial.print(":");
-    Serial.println(s);
-
-    EEPROM.write(9,h);
-    EEPROM.write(10,m);
-    EEPROM.write(11,s);
-   }
-   else{}
-  EEPROM.commit();
+  pumps[pumpSettingChoice].hourPeriodMode = h;
+  pumps[pumpSettingChoice].minutePeriodMode = m;
+  pumps[pumpSettingChoice].secondPeriodMode = s;
+  pumps[pumpSettingChoice].changed = true;
 }
 
 // PUMP DAY DOSING TIME INPUT
@@ -386,16 +360,6 @@ BLYNK_WRITE(V28)
 
 BLYNK_WRITE(V16) 
 {
-  if(pumpSettingChoice == 1)
-  {
-    int decilliters = param.asInt();
-    EEPROM.write(4,decilliters);
-  }
-  else if(pumpSettingChoice == 2)
-  {
-    int decilliters = param.asInt();
-    EEPROM.write(12,decilliters);
-  }
-  else{}
-  EEPROM.commit();
+  pumps[pumpSettingChoice].dlPeriodMode = param.asInt();
+  pumps[pumpSettingChoice].changed = true;
 }
