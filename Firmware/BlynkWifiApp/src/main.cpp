@@ -56,65 +56,115 @@ struct pump
 
 };
 
-pump pump1
-{
-  EEPROM.read(0), // multiple
+static const int EEPROM_multiple = 0;
+static const int EEPROM_hourPeriodMode = 1;
+static const int EEPROM_minutePeriodMode = 2;
+static const int EEPROM_secondPeriodMode = 3;
+static const int EEPROM_hourDailyMode = 4;
+static const int EEPROM_minuteDailyMode = 5;
+static const int EEPROM_secondDailyMode = 6;
+static const int EEPROM_dlPeriodMode = 7;
+static const int EEPROM_mlPeriodMode = 8;
+static const int EEPROM_dlDailyMode = 9;
+static const int EEPROM_mlDailyMode = 10;
+static const int EEPROM_modeSelect = 11;
+static const int EEPROM_pumpStatus = 12;
+static const int EEPROM_Mon = 13;
+static const int EEPROM_Tue = 14;
+static const int EEPROM_Wed = 15;
+static const int EEPROM_Thu = 16;
+static const int EEPROM_Fri = 17;
+static const int EEPROM_Sat = 18;
+static const int EEPROM_Sun = 19;
 
-  EEPROM.read(1), //hourPeriodMode
-  EEPROM.read(2), //minutePeriodMode
-  EEPROM.read(3), //secondPeriodMode
+static const int EEPROM_TOTAL = 30;
 
-  EEPROM.read(25), //hourDailyMode
-  EEPROM.read(26), //minuteDailyMode
-  EEPROM.read(27), //secondDailyMode
+void pumpInitFromEeprom(pump & p, const int numOfPump = 0) {
+	const int startAddress = EEPROM_TOTAL * numOfPump;
+	  
+	p.multiple = EEPROM.read(startAddress + EEPROM_multiple);
+	p.hourPeriodMode = EEPROM.read(startAddress + EEPROM_hourPeriodMode);
+	p.minutePeriodMode = EEPROM.read(startAddress + EEPROM_minutePeriodMode);
+	p.secondPeriodMode = EEPROM.read(startAddress + EEPROM_secondPeriodMode);
+	p.hourDailyMode = EEPROM.read(startAddress + EEPROM_hourDailyMode);
+	p.minuteDailyMode = EEPROM.read(startAddress + EEPROM_minuteDailyMode);
+	p.secondDailyMode = EEPROM.read(startAddress + EEPROM_secondDailyMode);
+	p.dlPeriodMode = EEPROM.read(startAddress + EEPROM_dlPeriodMode);
+	p.mlPeriodMode = EEPROM.read(startAddress + EEPROM_mlPeriodMode);
+	p.dlDailyMode = EEPROM.read(startAddress + EEPROM_dlDailyMode);
+	p.mlDailyMode = EEPROM.read(startAddress + EEPROM_mlDailyMode);
+	p.modeSelect = EEPROM.read(startAddress + EEPROM_modeSelect);
+	p.pumpStatus = EEPROM.read(startAddress + EEPROM_pumpStatus);
+	p.Mon = EEPROM.read(startAddress + EEPROM_Mon);
+	p.Tue = EEPROM.read(startAddress + EEPROM_Tue);
+	p.Wed = EEPROM.read(startAddress + EEPROM_Wed);
+	p.Thu = EEPROM.read(startAddress + EEPROM_Thu);
+	p.Fri = EEPROM.read(startAddress + EEPROM_Fri);
+	p.Sun = EEPROM.read(startAddress + EEPROM_Sun);
+	p.Sat = EEPROM.read(startAddress + EEPROM_Sat);
+}
 
-  EEPROM.read(4), //dlPeriodMode
-  EEPROM.read(5), // mlPeriodMode
 
-  EEPROM.read(16), //dlDailyMode
-  EEPROM.read(17), //mlDailyMode
 
-  EEPROM.read(6), //modeSelect
-  EEPROM.read(7), //pumpStatus
+// pump pump1
+// {
+//   EEPROM.read(0), // multiple
 
-  EEPROM.read(28), //MOn
-  EEPROM.read(29),
-  EEPROM.read(30),
-  EEPROM.read(31),
-  EEPROM.read(32),
-  EEPROM.read(33),
-  EEPROM.read(34) //sun
-};
+//   EEPROM.read(1), //hourPeriodMode
+//   EEPROM.read(2), //minutePeriodMode
+//   EEPROM.read(3), //secondPeriodMode
 
-pump pump2
-{
-  EEPROM.read(8),
+//   EEPROM.read(25), //hourDailyMode
+//   EEPROM.read(26), //minuteDailyMode
+//   EEPROM.read(27), //secondDailyMode
 
-  EEPROM.read(9),
-  EEPROM.read(10),
-  EEPROM.read(11),
+//   EEPROM.read(4), //dlPeriodMode
+//   EEPROM.read(5), // mlPeriodMode
 
-  EEPROM.read(21),
-  EEPROM.read(22),
-  EEPROM.read(23),
+//   EEPROM.read(16), //dlDailyMode
+//   EEPROM.read(17), //mlDailyMode
 
-  EEPROM.read(12),
-  EEPROM.read(13),
+//   EEPROM.read(6), //modeSelect
+//   EEPROM.read(7), //pumpStatus
 
-  EEPROM.read(18),
-  EEPROM.read(19),
+//   EEPROM.read(28), //MOn
+//   EEPROM.read(29),
+//   EEPROM.read(30),
+//   EEPROM.read(31),
+//   EEPROM.read(32),
+//   EEPROM.read(33),
+//   EEPROM.read(34) //sun
+// };
 
-  EEPROM.read(14),
-  EEPROM.read(15),
+// pump pump2
+// {
+//   EEPROM.read(8),
 
-  EEPROM.read(35),
-  EEPROM.read(36),
-  EEPROM.read(37),
-  EEPROM.read(38),
-  EEPROM.read(39),
-  EEPROM.read(40),
-  EEPROM.read(41)
-};
+//   EEPROM.read(9),
+//   EEPROM.read(10),
+//   EEPROM.read(11),
+
+//   EEPROM.read(21),
+//   EEPROM.read(22),
+//   EEPROM.read(23),
+
+//   EEPROM.read(12),
+//   EEPROM.read(13),
+
+//   EEPROM.read(18),
+//   EEPROM.read(19),
+
+//   EEPROM.read(14),
+//   EEPROM.read(15),
+
+//   EEPROM.read(35),
+//   EEPROM.read(36),
+//   EEPROM.read(37),
+//   EEPROM.read(38),
+//   EEPROM.read(39),
+//   EEPROM.read(40),
+//   EEPROM.read(41)
+// };
 
 BLYNK_CONNECTED() 
 {
