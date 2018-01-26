@@ -10,8 +10,13 @@
 
 char auth[] = "b5ac866ca280448cae7a375658aa923d";
 
-char ssid[] = "WL520GC";
-char pass[] = "klemont1";
+
+char ssid[] = "Ondřej - iPhone";
+char pass[] = "69696969";
+//char ssid[] = "WL520GC";
+//char pass[] = "klemont1";
+//char ssid[] = "SPAVOS_NET";
+//char pass[] = "m0gu145.";
 
 BlynkTimer timer;
 WidgetRTC rtc;
@@ -29,8 +34,6 @@ static const uint8_t motor2pin = 4;
 
 static const int numberOfPump = 2;
 Pump pumps[numberOfPump];
-
-Pump pump1, pump2;
 
 #include "blynk_functions.hpp"
 
@@ -149,6 +152,7 @@ void pumpStop()
 }
 void pumpStart(long dl, long ml, long HOUR, int MINUTE, uint16_t SECOND, uint8_t pumpNumber)
 {
+  Serial.println("Ve smycce pumpStart");
   long timeInSecond = 0;
   uint16_t amount = ((dl*100)+ml); 
   uint16_t constTime = 1000;
@@ -157,58 +161,58 @@ void pumpStart(long dl, long ml, long HOUR, int MINUTE, uint16_t SECOND, uint8_t
   MINUTE *= 60;
   
 
-  if(pump1.modeSelect == 2)
+  if(pumps[0].modeSelect == 2)
   {
-    timeInSecond = HOUR+MINUTE+SECOND+pump1.mutliple*3600;
+    timeInSecond = HOUR+MINUTE+SECOND+pumps[0].mutliple*3600;
     SECOND = timeInSecond % 60;
     timeInSecond /= 60;
     MINUTE = timeInSecond % 60;
     timeInSecond /= 60;
     HOUR = timeInSecond % 24;
   }
-  else if(pump2.modeSelect == 2)
+  else if(pumps[1].modeSelect == 2)
   {
-    timeInSecond = HOUR+MINUTE+SECOND+pump2.mutliple*3600;
+    timeInSecond = HOUR+MINUTE+SECOND+pumps[1].mutliple*3600;
     SECOND = timeInSecond % 60;
     timeInSecond /= 60;
     MINUTE = timeInSecond % 60;
     timeInSecond /= 60;
     HOUR = timeInSecond % 24;
   }
-  else if(pump1.modeSelect == 1) {}
-  else if(pump2.modeSelect == 1) {}
+  else if(pumps[0].modeSelect == 1) {}
+  else if(pumps[1].modeSelect == 1) {}
   else {}
   
   // EEPROM write
-  if(pump1.modeSelect == 2)
+  if(pumps[0].modeSelect == 2)
   {
-    EEPROM.write(1, HOUR);
-    EEPROM.write(2, MINUTE);
-    EEPROM.write(3, SECOND);
-
+    pumps[0].hourPeriodMode = HOUR;
+    pumps[0].minutePeriodMode = MINUTE;
+    pumps[0].secondPeriodMode = SECOND;
+    pumps[0].changed = true;
   }
-  else if(pump2.modeSelect == 2)
+  else if(pumps[1].modeSelect == 2)
   {
-    EEPROM.write(9, HOUR);
-    EEPROM.write(10, MINUTE);
-    EEPROM.write(11, SECOND);
-
+    pumps[1].hourPeriodMode = HOUR;
+    pumps[1].minutePeriodMode = MINUTE;
+    pumps[1].secondPeriodMode = SECOND;
+    pumps[1].changed = true;
   }
-  else if(pump1.modeSelect == 1)
+  else if(pumps[0].modeSelect == 1)
   {
-    EEPROM.write(25, HOUR);
-    EEPROM.write(26, MINUTE);
-    EEPROM.write(27, SECOND);
-
+    pumps[0].hourDailyMode = HOUR;
+    pumps[0].minuteDailyMode = MINUTE;
+    pumps[0].secondDailyMode = SECOND;
+    pumps[0].changed = true;
   }
-  else if(pump2.modeSelect == 1)
+  else if(pumps[1].modeSelect == 1)
   {
-    EEPROM.write(21, HOUR);
-    EEPROM.write(22, MINUTE);
-    EEPROM.write(23, SECOND);
+    pumps[1].hourDailyMode = HOUR;
+    pumps[1].minuteDailyMode = MINUTE;
+    pumps[1].secondDailyMode = SECOND;
+    pumps[1].changed = true;
   }
   else{}
-  EEPROM.commit();
   
 
   if(pumpNumber == 1)
@@ -226,212 +230,96 @@ void pumpStart(long dl, long ml, long HOUR, int MINUTE, uint16_t SECOND, uint8_t
 
 void timeTesting()
 { 
-  Serial.println(pump1.mutliple);
-  Serial.println(EEPROM.read(7));
-  Serial.println();
-  if(pump1.pumpStatus == 1 || pump2.pumpStatus == 1)
+  Serial.println("ve smycce time testing");
+  if(pumps[0].pumpStatus == 1 || pumps[1].pumpStatus == 1)
   {
-    if(pump1.modeSelect == 2 || pump2.modeSelect == 2)
+    if(pumps[0].modeSelect == 2 || pumps[1].modeSelect == 2)
     {
-      if(pump1.hourPeriodMode == hour() && pump1.minutePeriodMode == minute()	&& pump1.secondPeriodMode == second()) //pump1 period mode
+      if(pumps[0].hourPeriodMode == hour() && pumps[0].minutePeriodMode == minute()	&& pumps[0].secondPeriodMode == second()) //pump1 period mode
       { 
         uint8_t pumpNumber = 1;
-        pumpStart(pump1.dlPeriodMode,pump1.mlPeriodMode,pump1.hourPeriodMode,pump1.minutePeriodMode,pump1.secondPeriodMode,pumpNumber);
+        pumpStart(pumps[0].dlPeriodMode,pumps[0].mlPeriodMode,pumps[0].hourPeriodMode,pumps[0].minutePeriodMode,pumps[0].secondPeriodMode,pumpNumber);
       }
-      if(pump2.hourPeriodMode == hour() && pump2.minutePeriodMode == minute()	&& pump2.secondPeriodMode == second()) //pump2 period mode
+      if(pumps[1].hourPeriodMode == hour() && pumps[1].minutePeriodMode == minute()	&& pumps[1].secondPeriodMode == second()) //pump2 period mode
       { 
         uint8_t pumpNumber = 2;
-        pumpStart(pump2.dlPeriodMode,pump2.mlPeriodMode,pump2.hourPeriodMode,pump2.minutePeriodMode,pump2.secondPeriodMode,pumpNumber);
+        pumpStart(pumps[1].dlPeriodMode,pumps[1].mlPeriodMode,pumps[1].hourPeriodMode,pumps[1].minutePeriodMode,pumps[1].secondPeriodMode,pumpNumber);
       }
     }
-    else if (pump1.modeSelect == 1 || pump2.modeSelect == 1)
+    else if (pumps[0].modeSelect == 1 || pumps[1].modeSelect == 1)
     {
 
     }
     else{
-      Serial.println("Please select mode for pump 1");
+      Serial.println("Please select mode for pumps 1");
     }
   }
 }
-
 
 void printActSetVal()
 {
-  if(pumpSettingChoice == 1)
-  {
-    Blynk.virtualWrite(V18, EEPROM.read(5));
-    Blynk.virtualWrite(V17, EEPROM.read(4));
-    Blynk.virtualWrite(V20, EEPROM.read(0));
-    if(EEPROM.read(1)<10 && EEPROM.read(2)<10 )
-    {
-      String rowTime = String("0") + EEPROM.read(1) + ":" + "0"+ EEPROM.read(2);
-      Blynk.virtualWrite(V6, rowTime);
-    }
-    else if (EEPROM.read(1)<10)
-    {
-      String rowTime = String("0") + EEPROM.read(1) + ":" +  EEPROM.read(2);
-      Blynk.virtualWrite(6, rowTime);
-    }
-    else if(EEPROM.read(2)<10 )
-    {
-      String rowTime = String(EEPROM.read(1)) + ":" + "0"+ EEPROM.read(2);
-      Blynk.virtualWrite(6, rowTime);
-    }
-    else
-    {
-      String rowTime = String(EEPROM.read(1)) + ":" + EEPROM.read(2);
-      Blynk.virtualWrite(6, rowTime);
-    }
+  Blynk.virtualWrite(V18, pumps[pumpSettingChoice].mlPeriodMode); //ml
+  Blynk.virtualWrite(V17, pumps[pumpSettingChoice].dlPeriodMode); //dl
+  Blynk.virtualWrite(V20, pumps[pumpSettingChoice].mutliple); //period
+
+  Blynk.virtualWrite(V25, pumps[pumpSettingChoice1].mlDailyMode); //ml
+  Blynk.virtualWrite(V26, pumps[pumpSettingChoice1].dlDailyMode); //dl
+  String mon = String("Mo ");
+  String tue = String("Tu ");
+  String wed = String("We ");
+  String thu = String("Th ");
+  String fri = String("Fr ");
+  String sat = String("Sa ");
+  String sun = String("Su");
+  if(pumps[pumpSettingChoice1].Mon==0){
+    mon = "";
   }
-  else if (pumpSettingChoice == 2)
+  if(pumps[pumpSettingChoice1].Tue==0){
+    tue = "";
+  }
+  if(pumps[pumpSettingChoice1].Wed==0){
+    wed = "";
+  }
+  if(pumps[pumpSettingChoice1].Thu==0){
+    thu = "";
+  }
+  if(pumps[pumpSettingChoice1].Fri==0){
+    fri = "";
+  }
+  if(pumps[pumpSettingChoice1].Sat==0){
+    sat = "";
+  }
+  if(pumps[pumpSettingChoice1].Sun==0){
+    sun = "";
+  }
+  String printDay = String(mon) + tue + wed + thu + fri + sat + sun;
+  Blynk.virtualWrite(V24, printDay);
+  /* String rowTime;
+  if(EEPROM.read(25)<10 && EEPROM.read(26)<10 )
   {
-    Blynk.virtualWrite(V18, EEPROM.read(13));
-    Blynk.virtualWrite(V17, EEPROM.read(12));
-    Blynk.virtualWrite(V20, EEPROM.read(8));
-    if(EEPROM.read(9)<10 && EEPROM.read(10)<10 )
-    {
-      String rowTime = String("0") + EEPROM.read(9) + ":" + "0"+ EEPROM.read(10);
-      Blynk.virtualWrite(V6, rowTime);
-    }
-    else if (EEPROM.read(9)<10)
-    {
-      String rowTime = String("0") + EEPROM.read(9) + ":" +  EEPROM.read(10);
-      Blynk.virtualWrite(V6, rowTime);
-    }
-    else if(EEPROM.read(10)<10 )
-    {
-      String rowTime = String(EEPROM.read(9)) + ":" + "0"+ EEPROM.read(10);
-      Blynk.virtualWrite(V6, rowTime);
-    }
-    else
-    {
-      String rowTime = String(EEPROM.read(9)) + ":" + EEPROM.read(10);
-      Blynk.virtualWrite(V6, rowTime);
-    }
+    String rowTime = String("0") + EEPROM.read(25) + ":" + "0"+ EEPROM.read(26);
+  }
+  else if (EEPROM.read(25)<10)
+  {
+    String rowTime = String("0") + EEPROM.read(25) + ":" +  EEPROM.read(26);
+  }
+  else if(EEPROM.read(26)<10 )
+  {
+    String rowTime = String(EEPROM.read(25)) + ":" + "0"+ EEPROM.read(26);
   }
   else
   {
-    Blynk.virtualWrite(V18," ");
-    Blynk.virtualWrite(V17," ");
-    Blynk.virtualWrite(V20," ");
-  }
-
-  if(pumpSettingChoice1 == 1)
-  {
-    String Mon = String("Mo ");
-    String Tue = String("Tu ");
-    String Wed = String("We ");
-    String Thu = String("Th ");
-    String Fri = String("Fr ");
-    String Sat = String("Sa ");
-    String Sun = String("Su");
-    if(EEPROM.read(28)==0)
-    {
-      Mon = "";
-    }
-    if(EEPROM.read(29)==0)
-    {
-      Tue = "";
-    }
-    if(EEPROM.read(30)==0)
-    {
-      Wed = "";
-    }
-    if(EEPROM.read(31)==0)
-    {
-      Thu = "";
-    }
-    if(EEPROM.read(32)==0)
-    {
-      Fri = "";
-    }
-    if(EEPROM.read(33)==0)
-    {
-      Sat = "";
-    }
-    if(EEPROM.read(34)==0)
-    {
-      Sun = "";
-    }
-
-   /* String rowTime;
-    if(EEPROM.read(25)<10 && EEPROM.read(26)<10 )
-    {
-      String rowTime = String("0") + EEPROM.read(25) + ":" + "0"+ EEPROM.read(26);
-    }
-    else if (EEPROM.read(25)<10)
-    {
-      String rowTime = String("0") + EEPROM.read(25) + ":" +  EEPROM.read(26);
-    }
-    else if(EEPROM.read(26)<10 )
-    {
-      String rowTime = String(EEPROM.read(25)) + ":" + "0"+ EEPROM.read(26);
-    }
-    else
-    {
-      String rowTime = String(EEPROM.read(25)) + ":" + EEPROM.read(26);
-    }*/
-
-
-    String printDay = String(Mon) + Tue + Wed + Thu + Fri + Sat + Sun;
-    Blynk.virtualWrite(V24, printDay);
-  }
-  else if(pumpSettingChoice1 == 2)
-  {
-    String Mon = String("Mon");
-    String Tue = String("Tue");
-    String Wed = String("Wed");
-    String Thu = String("Thu");
-    String Fri = String("Fri");
-    String Sat = String("Sat");
-    String Sun = String("Sun");
-    if(EEPROM.read(35)==0)
-    {
-      Mon = "   ";
-    }
-    if(EEPROM.read(36)==0)
-    {
-      Tue = "   ";
-    }
-    if(EEPROM.read(37)==0)
-    {
-      Wed = "   ";
-    }
-    if(EEPROM.read(38)==0)
-    {
-      Thu = "   ";
-    }
-    if(EEPROM.read(39)==0)
-    {
-      Fri = "   ";
-    }
-    if(EEPROM.read(40)==0)
-    {
-      Sat = "   ";
-    }
-    if(EEPROM.read(41)==0)
-    {
-      Sun = "   ";
-    }
-    String printDay = String(Mon) + " " + Tue + " " + Wed + " " + Thu + " " + Fri + " " + Sat + " " + Sun;
-    Blynk.virtualWrite(V24, printDay);
-  }
-  else
-  {
-    String errorMesseage = String("Please select pump");
-    Blynk.virtualWrite(V24, errorMesseage);
-  }
+    String rowTime = String(EEPROM.read(25)) + ":" + EEPROM.read(26);
+  }*/
 }
-
 
 void setup()
 {
   EEPROM.begin(512);
 
   for(int actualPump = 0; actualPump < numberOfPump; ++actualPump) {
-    EEPROM.get(EEPROM_pumpSize + actualPump++, pumps[actualPump]); 
+    EEPROM.put(EEPROM_pumpSize * actualPump, pumps[actualPump]); 
   }
-
 
   setupLeds();
   setupButtons();
@@ -461,7 +349,9 @@ void loop()
 
   for(int actualPump = 0; actualPump < numberOfPump; ++actualPump) {
     if(pumps[actualPump].changed) {
-      EEPROM.get(EEPROM_pumpSize + actualPump++, pumps[actualPump]); 
+      pumps[0].changed = false;
+      pumps[1].changed = false;
+      EEPROM.put(EEPROM_pumpSize * actualPump, pumps[actualPump]); 
     }
   }
 }
