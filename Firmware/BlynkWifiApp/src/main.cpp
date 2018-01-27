@@ -320,7 +320,7 @@ void setup()
   EEPROM.begin(512);
 
   for(int actualPump = 0; actualPump < numberOfPump; ++actualPump) {
-    EEPROM.put(EEPROM_pumpSize * actualPump, pumps[actualPump]); 
+    EEPROM.get(EEPROM_pumpSize * actualPump, pumps[actualPump]); 
   }
 
   setupLeds();
@@ -351,8 +351,7 @@ void loop()
 
   for(int actualPump = 0; actualPump < numberOfPump; ++actualPump) {
     if(pumps[actualPump].changed) {
-      pumps[0].changed = false;
-      pumps[1].changed = false;
+      pumps[actualPump].changed = false;
       EEPROM.put(EEPROM_pumpSize * actualPump, pumps[actualPump]); 
     }
   }
