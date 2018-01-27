@@ -323,6 +323,12 @@ void setup()
     EEPROM.get(EEPROM_pumpSize * actualPump, pumps[actualPump]); 
   }
 
+  for(int actualPump = 0; actualPump < numberOfPump; ++actualPump) {
+    Serial.print("\n\n\tpumpPrint ");
+    Serial.println(actualPump);
+    pumpPrint(pumps[actualPump]); 
+  }
+
   setupLeds();
   setupButtons();
 

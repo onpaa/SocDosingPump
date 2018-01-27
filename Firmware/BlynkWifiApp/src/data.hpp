@@ -56,3 +56,34 @@ static const int EEPROM_Sun = 19;
 static const int EEPROM_changed = 20;
 
 static const int EEPROM_pumpSize = 30;
+
+void pumpPrint(Pump & p) {
+  Serial.println(p.mutliple);
+
+  Serial.println(p.hourPeriodMode);
+  Serial.println(p.minutePeriodMode);
+  Serial.println(p.secondPeriodMode);
+
+  Serial.println(p.hourDailyMode);
+  Serial.println(p.minuteDailyMode);
+  Serial.println(p.secondDailyMode);
+
+  Serial.println(p.dlPeriodMode);
+  Serial.println(p.mlPeriodMode);
+
+  Serial.println(p.dlDailyMode);
+  Serial.println(p.mlDailyMode);
+
+  Serial.println(p.modeSelect);
+  Serial.println(p.pumpStatus);
+
+  Serial.println(p.Mon);
+  Serial.println(p.Tue);
+  Serial.println(p.Wed);
+  Serial.println(p.Thu);
+  Serial.println(p.Fri);
+  Serial.println(p.Sat);
+  Serial.println(p.Sun);
+
+  Serial.println(p.changed);
+}
