@@ -11,10 +11,10 @@
 char auth[] = "b5ac866ca280448cae7a375658aa923d";
 
 
-char ssid[] = "Ondřej - iPhone";
-char pass[] = "69696969";
-//char ssid[] = "WL520GC";
-//char pass[] = "klemont1";
+////char ssid[] = "Ondřej - iPhone";
+//char pass[] = "69696969";
+char ssid[] = "WL520GC";
+char pass[] = "klemont1";
 //char ssid[] = "SPAVOS_NET";
 //char pass[] = "m0gu145.";
 
@@ -230,7 +230,6 @@ void pumpStart(long dl, long ml, long HOUR, int MINUTE, uint16_t SECOND, uint8_t
 
 void timeTesting()
 { 
-  Serial.println("ve smycce time testing");
   if(pumps[0].pumpStatus == 1 || pumps[1].pumpStatus == 1)
   {
     if(pumps[0].modeSelect == 2 || pumps[1].modeSelect == 2)
@@ -250,8 +249,11 @@ void timeTesting()
     {
 
     }
-    else{
+    else if(pumps[0].modeSelect != 1 && pumps[0].modeSelect != 2) { 
       Serial.println("Please select mode for pumps 1");
+    }
+    else if(pumps[1].modeSelect != 1 && pumps[1].modeSelect != 2) { 
+      Serial.println("Please select mode for pumps 2");
     }
   }
 }
@@ -339,7 +341,7 @@ void setup()
   timer.setInterval(1000L, pumpAllValue2);
   timer.setInterval(100L,printActSetVal);
   timer.setInterval(500L, timeTesting);
- // timer.setInterval(500L, pumpStop);
+  timer.setInterval(50L, pumpStop);
 }
 
 void loop()

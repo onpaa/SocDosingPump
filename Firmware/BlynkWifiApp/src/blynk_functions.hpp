@@ -49,7 +49,7 @@ BLYNK_WRITE(V2)
     default:
       pumps[0].modeSelect = 1;
   }
-  EEPROM.commit();
+  pumps[0].changed = true;
 }
 
 //pump2 mode select
@@ -66,7 +66,7 @@ BLYNK_WRITE(V8)
     default:
       pumps[1].modeSelect = 1;
   }
-  EEPROM.commit();
+  pumps[1].changed = true;
 }
 //setting PERIOD menu pump choice
 BLYNK_WRITE(V21)
