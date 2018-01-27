@@ -5,10 +5,23 @@ BLYNK_CONNECTED()
   rtc.begin();
 }
 
+BLYNK_WRITE(V0)
+{ 
+  //int pinValue = param.asInt(); 
+  //digitalWrite(L_B, pinValue);
+  if(param.asInt())
+  {
+    for(int actualPump = 0; actualPump < numberOfPump; ++actualPump) {
+    Serial.print("\n\n\tpumpPrint ");
+    Serial.println(actualPump);
+    pumpPrint(pumps[actualPump]); 
+    }
+  }
+}
 BLYNK_WRITE(V1)
 { 
-    int pinValue = param.asInt(); 
-    digitalWrite(L_B, pinValue);
+    //int pinValue = param.asInt(); 
+    //digitalWrite(L_B, pinValue);
     if(param.asInt())
     {
       Serial.println("Pump 1 on");
@@ -22,8 +35,8 @@ BLYNK_WRITE(V1)
 }
 BLYNK_WRITE(V13)
 { 
-    int pinValue = param.asInt(); 
-    digitalWrite(L_G, pinValue);
+    //int pinValue = param.asInt(); 
+    //digitalWrite(L_G, pinValue);
     if(param.asInt())
     {
       Serial.println("Pump 2 on");
@@ -41,13 +54,16 @@ BLYNK_WRITE(V2)
   switch (param.asInt())
   {
     case 1: 
-      pumps[0].modeSelect = 1;    
+      pumps[0].modeSelect = 0; 
+      Serial.println("Daily dosing");
       break;
     case 2: 
-      pumps[0].modeSelect = 2;
+      pumps[0].modeSelect = 1;
+      Serial.println("Period dosing");
       break;
     default:
-      pumps[0].modeSelect = 1;
+      pumps[0].modeSelect = 0;
+      Serial.println("Daily dosing default case");
   }
   pumps[0].changed = true;
 }
@@ -58,32 +74,23 @@ BLYNK_WRITE(V8)
   switch (param.asInt())
   {
     case 1: 
-      pumps[1].modeSelect = 1;   
+      pumps[1].modeSelect = 0;  
+      Serial.println("Daily dosing"); 
       break;
     case 2: 
-      pumps[1].modeSelect = 2;
+      pumps[1].modeSelect = 1;
+      Serial.println("Period dosing");
       break;
     default:
-      pumps[1].modeSelect = 1;
+      pumps[1].modeSelect = 0;
+      Serial.println("Daily dosing default case");
   }
   pumps[1].changed = true;
 }
-//setting PERIOD menu pump choice
-BLYNK_WRITE(V21)
- {
-  switch (param.asInt())
-  {
-    case 1: 
-      pumpSettingChoice = 0;   
-      break;
-    case 2: 
-      pumpSettingChoice = 1;
-      break;
-    default:
-      pumpSettingChoice = 0;
-  }
+BLYNK_WRITE(V32) 
+{
+  pumpSettingChoice = param.asInt();   
 }
-
 //setting DAY DOSING menu pump choice
 BLYNK_WRITE(V23)
  {
@@ -99,7 +106,7 @@ BLYNK_WRITE(V23)
       pumpSettingChoice1 = 0;
   }
 }
-// PUMP MULTIPLE TIME INPUT START
+// PUMP period TIME INPUT START
 
 BLYNK_WRITE(V9) 
 {
@@ -122,6 +129,7 @@ BLYNK_WRITE(V9)
   pumps[pumpSettingChoice].hourPeriodMode = h;
   pumps[pumpSettingChoice].minutePeriodMode = m;
   pumps[pumpSettingChoice].secondPeriodMode = s;
+  pumps[pumpSettingChoice].changed = true;
 }
 
 // PUMP DAY DOSING TIME INPUT
@@ -176,56 +184,42 @@ BLYNK_WRITE(V7)
   else{
     pumps[pumpSettingChoice1].Sun = 0;
   }
-}
-
-// save button periodical setting
-BLYNK_WRITE(V29)
-{  
-    if(param.asInt())
-    {
-      Serial.println("Data in periodical setting has been saved");
-      pumps[pumpSettingChoice].changed = true;
-    }
-}
-
-// save button daily setting
-BLYNK_WRITE(V30)
-{  
-    if(param.asInt())
-    {
-      Serial.println("Data in dayli setting has been saved");
-      pumps[pumpSettingChoice1].changed = true;
-    }
+  pumps[pumpSettingChoice1].changed = true;
 }
 
 // period mode PERIOD
 BLYNK_WRITE(V19) 
 {
   pumps[pumpSettingChoice].mutliple = param.asInt();
+  pumps[pumpSettingChoice].changed = true;
 }
 
 // period dl set
 BLYNK_WRITE(V16) 
 {
   pumps[pumpSettingChoice].dlPeriodMode = param.asInt();
+  pumps[pumpSettingChoice].changed = true;
 }
 
 // daily dl set
 BLYNK_WRITE(V14) 
 {
   pumps[pumpSettingChoice1].dlDailyMode = param.asInt();
+  pumps[pumpSettingChoice1].changed = true;
 }
 
 // period ml set
 BLYNK_WRITE(V15) 
 {
   pumps[pumpSettingChoice].mlPeriodMode = param.asInt();
+  pumps[pumpSettingChoice].changed = true;
 }
 
 // daily ml set
 BLYNK_WRITE(V31) 
 {
   pumps[pumpSettingChoice1].mlDailyMode = param.asInt();
+  pumps[pumpSettingChoice1].changed = true;
 }
 
 //pump1 calibration
