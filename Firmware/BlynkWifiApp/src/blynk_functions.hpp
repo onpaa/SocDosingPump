@@ -87,9 +87,20 @@ BLYNK_WRITE(V8)
   }
   pumps[1].changed = true;
 }
-BLYNK_WRITE(V32) 
-{
-  pumpSettingChoice = param.asInt();   
+BLYNK_WRITE(V32)
+ {
+  switch (param.asInt())
+  {
+    case 1: 
+      periodSettingChoice = 0;   
+      break;
+    case 2: 
+      periodSettingChoice = 1;  
+      break;
+    default:
+      periodSettingChoice = 0;  
+  }
+  pumps[periodSettingChoice].changed = true;
 }
 //setting DAY DOSING menu pump choice
 BLYNK_WRITE(V23)
@@ -97,14 +108,15 @@ BLYNK_WRITE(V23)
   switch (param.asInt())
   {
     case 1: 
-      pumpSettingChoice1 = 0;   
+      dayliSettingChoice = 0;  
       break;
     case 2: 
-      pumpSettingChoice1 = 1;
+      dayliSettingChoice = 1;  
       break;
     default:
-      pumpSettingChoice1 = 0;
+      dayliSettingChoice = 0;  
   }
+  pumps[dayliSettingChoice].changed = true;
 }
 // PUMP period TIME INPUT START
 
@@ -126,10 +138,10 @@ BLYNK_WRITE(V9)
   Serial.print(":");
   Serial.println(s);
 
-  pumps[pumpSettingChoice].hourPeriodMode = h;
-  pumps[pumpSettingChoice].minutePeriodMode = m;
-  pumps[pumpSettingChoice].secondPeriodMode = s;
-  pumps[pumpSettingChoice].changed = true;
+  pumps[periodSettingChoice].hourPeriodMode = h;
+  pumps[periodSettingChoice].minutePeriodMode = m;
+  pumps[periodSettingChoice].secondPeriodMode = s;
+  pumps[periodSettingChoice].changed = true;
 }
 
 // PUMP DAY DOSING TIME INPUT
@@ -137,89 +149,89 @@ BLYNK_WRITE(V7)
 {
   TimeInputParam t(param);
   if (t.hasStartTime()) {
-    pumps[pumpSettingChoice1].hourDailyMode = t.getStartHour();
-    pumps[pumpSettingChoice1].minuteDailyMode = t.getStartMinute();
-    pumps[pumpSettingChoice1].secondDailyMode = t.getStartSecond();
+    pumps[dayliSettingChoice].hourDailyMode = t.getStartHour();
+    pumps[dayliSettingChoice].minuteDailyMode = t.getStartMinute();
+    pumps[dayliSettingChoice].secondDailyMode = t.getStartSecond();
   }
   
   if (t.isWeekdaySelected(1)) {
-    pumps[pumpSettingChoice1].Mon = 1;
+    pumps[dayliSettingChoice].Mon = 1;
   }
   else {
-    pumps[pumpSettingChoice1].Mon = 0;
+    pumps[dayliSettingChoice].Mon = 0;
   }
   if (t.isWeekdaySelected(2)) {
-    pumps[pumpSettingChoice1].Tue = 1;
+    pumps[dayliSettingChoice].Tue = 1;
   }
   else {
-    pumps[pumpSettingChoice1].Tue = 0;
+    pumps[dayliSettingChoice].Tue = 0;
   }
   if (t.isWeekdaySelected(3)) {
-    pumps[pumpSettingChoice1].Wed = 1;  
+    pumps[dayliSettingChoice].Wed = 1;  
   }
   else {
-    pumps[pumpSettingChoice1].Wed = 0;
+    pumps[dayliSettingChoice].Wed = 0;
   }
   if (t.isWeekdaySelected(4)) {
-    pumps[pumpSettingChoice1].Thu = 1;
+    pumps[dayliSettingChoice].Thu = 1;
   }
   else {
-    pumps[pumpSettingChoice1].Thu = 0;
+    pumps[dayliSettingChoice].Thu = 0;
   }
   if (t.isWeekdaySelected(5)) {
-    pumps[pumpSettingChoice1].Fri = 1;
+    pumps[dayliSettingChoice].Fri = 1;
   }
   else {
-    pumps[pumpSettingChoice1].Fri = 0;
+    pumps[dayliSettingChoice].Fri = 0;
   }
   if (t.isWeekdaySelected(6))  {
-    pumps[pumpSettingChoice1].Sat = 1;
+    pumps[dayliSettingChoice].Sat = 1;
   }
   else {
-    pumps[pumpSettingChoice1].Sat = 0;
+    pumps[dayliSettingChoice].Sat = 0;
   }
   if (t.isWeekdaySelected(7)) {
-    pumps[pumpSettingChoice1].Sun = 1;
+    pumps[dayliSettingChoice].Sun = 1;
   }
   else{
-    pumps[pumpSettingChoice1].Sun = 0;
+    pumps[dayliSettingChoice].Sun = 0;
   }
-  pumps[pumpSettingChoice1].changed = true;
+  pumps[dayliSettingChoice].changed = true;
 }
 
 // period mode PERIOD
 BLYNK_WRITE(V19) 
 {
-  pumps[pumpSettingChoice].mutliple = param.asInt();
-  pumps[pumpSettingChoice].changed = true;
+  pumps[periodSettingChoice].mutliple = param.asInt();
+  pumps[periodSettingChoice].changed = true;
 }
 
 // period dl set
 BLYNK_WRITE(V16) 
 {
-  pumps[pumpSettingChoice].dlPeriodMode = param.asInt();
-  pumps[pumpSettingChoice].changed = true;
+  pumps[periodSettingChoice].dlPeriodMode = param.asInt();
+  pumps[periodSettingChoice].changed = true;
 }
 
 // daily dl set
 BLYNK_WRITE(V14) 
 {
-  pumps[pumpSettingChoice1].dlDailyMode = param.asInt();
-  pumps[pumpSettingChoice1].changed = true;
+  pumps[dayliSettingChoice].dlDailyMode = param.asInt();
+  pumps[dayliSettingChoice].changed = true;
 }
 
 // period ml set
 BLYNK_WRITE(V15) 
 {
-  pumps[pumpSettingChoice].mlPeriodMode = param.asInt();
-  pumps[pumpSettingChoice].changed = true;
+  pumps[periodSettingChoice].mlPeriodMode = param.asInt();
+  pumps[periodSettingChoice].changed = true;
 }
 
 // daily ml set
 BLYNK_WRITE(V31) 
 {
-  pumps[pumpSettingChoice1].mlDailyMode = param.asInt();
-  pumps[pumpSettingChoice1].changed = true;
+  pumps[dayliSettingChoice].mlDailyMode = param.asInt();
+  pumps[dayliSettingChoice].changed = true;
 }
 
 //pump1 calibration

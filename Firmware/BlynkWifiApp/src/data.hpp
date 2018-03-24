@@ -1,5 +1,9 @@
 #pragma once
 
+
+uint8_t periodSettingChoice;
+uint8_t dayliSettingChoice;
+
 struct Pump
 {
   uint8_t mutliple;
@@ -56,6 +60,7 @@ static const int EEPROM_Sun = 19;
 static const int EEPROM_changed = 20;
 
 static const int EEPROM_pumpSize = 30;
+
 
 void pumpPrint(Pump & p) {
   Serial.println(p.mutliple);
